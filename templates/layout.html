@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/styles.css">
+    <link id="favicon" type="image/x-icon" href="https://calendar.google.com/googlecalendar/images/favicons_2020q4/calendar_3.ico" rel="icon">
+  </head>
+  <style>
+    #settings-menu-button:hover #settings-svg{ 
+      fill: #2e3033 !important;
+    }
+  </style>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between px-4">
+      <a class="navbar-brand" href="/">
+          <img src="../static/calendar_logo.svg" width="40" height="40" alt="">
+          <span class="align-middle">Better Calendar</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+      </button>
+      <div>
+          {% if "user" in session %}
+          <ul class="navbar-nav">
+            <li class="nav-item mr-2">
+              <div class="btn-group">
+                <button class="btn btn-secondary" type="button" id="settings-menu-button" data-bs-toggle="dropdown" aria-expanded="false" style="background: none; border: none;">
+                  <svg id="settings-svg" style="fill: #5f6367; transition: fill 0.3s;" width="24" height="24" viewBox="0 0 24 24" focusable="false">
+                    <path d="M13.85 22.25h-3.7c-.74 0-1.36-.54-1.45-1.27l-.27-1.89c-.27-.14-.53-.29-.79-.46l-1.8.72c-.7.26-1.47-.03-1.81-.65L2.2 15.53c-.35-.66-.2-1.44.36-1.88l1.53-1.19c-.01-.15-.02-.3-.02-.46 0-.15.01-.31.02-.46l-1.52-1.19c-.59-.45-.74-1.26-.37-1.88l1.85-3.19c.34-.62 1.11-.9 1.79-.63l1.81.73c.26-.17.52-.32.78-.46l.27-1.91c.09-.7.71-1.25 1.44-1.25h3.7c.74 0 1.36.54 1.45 1.27l.27 1.89c.27.14.53.29.79.46l1.8-.72c.71-.26 1.48.03 1.82.65l1.84 3.18c.36.66.2 1.44-.36 1.88l-1.52 1.19c.01.15.02.3.02.46s-.01.31-.02.46l1.52 1.19c.56.45.72 1.23.37 1.86l-1.86 3.22c-.34.62-1.11.9-1.8.63l-1.8-.72c-.26.17-.52.32-.78.46l-.27 1.91c-.1.68-.72 1.22-1.46 1.22zm-3.23-2h2.76l.37-2.55.53-.22c.44-.18.88-.44 1.34-.78l.45-.34 2.38.96 1.38-2.4-2.03-1.58.07-.56c.03-.26.06-.51.06-.78s-.03-.53-.06-.78l-.07-.56 2.03-1.58-1.39-2.4-2.39.96-.45-.35c-.42-.32-.87-.58-1.33-.77l-.52-.22-.37-2.55h-2.76l-.37 2.55-.53.21c-.44.19-.88.44-1.34.79l-.45.33-2.38-.95-1.39 2.39 2.03 1.58-.07.56a7 7 0 0 0-.06.79c0 .26.02.53.06.78l.07.56-2.03 1.58 1.38 2.4 2.39-.96.45.35c.43.33.86.58 1.33.77l.53.22.38 2.55z"></path>
+                    <circle cx="12" cy="12" r="3.5"></circle>
+                  </svg>
+                </button>
+                
+                <ul class="dropdown-menu dropdown-menu-end" id="settings-dropdown-menu" aria-labelledby="dropdownMenuButton1" style="min-width: 268px;">
+                  <li>
+                    <div class="form-check form-switch dropdown-item" id="colors-switch">
+                      <input itemid="colors-switch-input" id="colors-switch-input" checked class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                      <label id="colors-switch-label" class="form-check-label" for="flexSwitchCheckDefault" style="user-select: none;"></label>
+                    </div>
+                  </li>
+                  <li>
+                    <button class="btn btn-primary dropdown-item" type="button" id="color-switch-default-button"></button>
+                  </li>
+                </ul>
+              </div>
+              
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link-primary" style="text-decoration: underline;" href="/logout">Logout</a>
+            </li>
+          </ul>
+          {% else %}
+          <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link link-primary" style="text-decoration: underline;" href="/login">Login with Google</a>
+            </li>
+          </ul>
+          {% endif %}
+      </div>
+    </nav>
+    {% block body %}
+    {% endblock %}
+    
+    {% block script %}
+    {% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  </body>
+</html>

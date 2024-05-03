@@ -1,0 +1,214 @@
+{% extends "layout.html" %}
+
+{% block title %}Hours{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="my-4">
+            Calendar hours stats
+        </h1>
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+              <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#week" type="button" role="tab" aria-controls="week" aria-selected="true">This Week</button>
+              <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#month" type="button" role="tab" aria-controls="month" aria-selected="false">This Month</button>
+              <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#prev-month" type="button" role="tab" aria-controls="prev-month" aria-selected="false">Prevous Month</button>
+              <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#year" type="button" role="tab" aria-controls="year" aria-selected="false">This Year</button>
+            </div>
+          </nav>
+          <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade show active" id="week" role="tabpanel" aria-labelledby="week">
+                <canvas id="week-chart"></canvas>
+            </div>
+            <div class="tab-pane fade" id="month" role="tabpanel" aria-labelledby="month">
+                <canvas id="month-chart"></canvas>
+            </div>
+            <div class="tab-pane fade" id="prev-month" role="tabpanel" aria-labelledby="prev-month">
+                <canvas id="prev-month-chart"></canvas>
+            </div>
+            <div class="tab-pane fade" id="year" role="tabpanel" aria-labelledby="year">
+                <canvas id="year-chart"></canvas>
+            </div>
+          </div>
+
+          
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const hours = {{ hours|tojson }};
+
+        const weekChartEl = document.getElementById("week-chart");
+        const monthChartEl = document.getElementById("month-chart");
+        const prevMonthChartEl = document.getElementById("prev-month-chart");
+        const yearChartEl = document.getElementById("year-chart");
+        
+        const chartEls = [weekChartEl, monthChartEl, prevMonthChartEl, yearChartEl];
+        
+        const chartLabels = ["Hours during this week",
+        "Hours during this month up to the end of this week", 
+        "Hours during previous month", 
+        "Hours during this year up to the end of this week"];
+        
+        let labels = [];
+        let weekData = [];
+        let monthData = [];
+        let prevMonthData = [];
+        let yearData = [];
+        let classicBorderColors = [];
+        let modernBorderColors = [];
+        let classicBackgroundColors = [];
+        let modernBackgroundColors = [];
+        
+        for (const calendarStat in hours) {
+            labels.push(hours[calendarStat]["summary"]);
+            classicBorderColors.push(hours[calendarStat]["classic_color"]);
+            modernBorderColors.push(hours[calendarStat]["modern_color"]);
+            classicBackgroundColors.push(hexToRGBA(hours[calendarStat]["classic_color"], 0.25));
+            modernBackgroundColors.push(hexToRGBA(hours[calendarStat]["modern_color"], 0.25));
+            weekData.push(hours[calendarStat]["week"]);
+            monthData.push(hours[calendarStat]["month"]);
+            prevMonthData.push(hours[calendarStat]["prev_month"]);
+            yearData.push(hours[calendarStat]["year"]);
+        }
+        
+        data = [weekData, monthData, prevMonthData, yearData];
+        
+        const minBarLength = 5;
+        const borderWidth = 1;
+        
+        const colorsSwitch = document.getElementById("colors-switch");
+        const colorsSwitchLabel = document.getElementById("colors-switch-label");
+        const colorsSwitchInput = document.getElementById("colors-switch-input");
+        const colorsSwitchDefaultButton = document.getElementById("color-switch-default-button");
+
+        const defaultColorsState = "{{default_colors_state}}";
+        let colorsState = defaultColorsState;
+        
+        colorsSwitch.addEventListener("click", switchColors);
+        colorsSwitchLabel.addEventListener("click", () => {
+            colorsSwitchInput.checked = !colorsSwitchInput.checked;
+        })
+
+        
+        colorsSwitch.addEventListener("click", function(e) {
+            e.stopPropagation();
+        })
+
+        if (defaultColorsState === "modern") {
+            colorsSwitchLabel.innerText = "Modern colors";
+            // Its already default so its kinda wierd to say that...
+            // Maybe change to "Modern colors are set as default"
+            colorsSwitchDefaultButton.innerText = "Modern colors are set as default";
+            colorsSwitchDefaultButton.disabled = true;
+            colorsSwitchInput.checked = true;
+        } 
+        
+        if (defaultColorsState === "classic") {
+            colorsSwitchLabel.innerText = "Classic colors";
+            colorsSwitchDefaultButton.innerText = "Classic colors are set as default";
+            colorsSwitchDefaultButton.disabled = true;
+            colorsSwitchInput.checked = false;
+        }
+
+        colorsSwitchDefaultButton.addEventListener("click", function() {
+            // Redirect to save the new default state
+            window.location.href = `http://localhost:5000/change_default_colors`;
+        })
+
+
+        let charts = {};
+        
+        for (let i = 0; i < 4; i++){
+            currentChart = new Chart(chartEls[i], {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: chartLabels[i],
+                        data: data[i],
+                        borderColor: classicBorderColors,
+                        backgroundColor: classicBackgroundColors,
+                        minBarLength: minBarLength,
+                        borderWidth: borderWidth,
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    animation: false,
+                }
+            });
+            
+            // const chart = {}
+            // chart[chartEls[i].id] = currentChart;
+            charts[chartEls[i].id] = currentChart;
+        }
+        
+
+        function hexToRGBA(hex, opacity) {
+            // Remove "#" if present
+            hex = hex.replace("#", "")
+
+            // Parse RGB values
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+
+            // Convert RGB to RGBA with opacity
+            const rgba = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+
+            return rgba;
+        }
+
+        function switchColors() {            
+            if (colorsState === "modern") {
+                colorsState = "classic";
+                colorsSwitchLabel.innerText = "Classic colors";
+                
+                if (defaultColorsState === "classic") {
+                    colorsSwitchDefaultButton.innerText = "Classic colors are set as default";
+                    colorsSwitchDefaultButton.disabled = true;
+                }
+                else {
+                    colorsSwitchDefaultButton.innerText = "Set classic colors as default";
+                    colorsSwitchDefaultButton.disabled = false;
+                }
+
+                for (let chart in charts) {
+                    charts[chart].data.datasets[0].borderColor = classicBorderColors;
+                    charts[chart].data.datasets[0].backgroundColor = classicBackgroundColors;
+                    charts[chart].update()
+                }
+
+                return;
+            }
+
+            if (colorsState === "classic") {
+                colorsState = "modern";
+                colorsSwitchLabel.innerText = "Modern colors";
+
+                if (defaultColorsState === "modern") {
+                    colorsSwitchDefaultButton.innerText = "Modern colors are set as default";
+                    colorsSwitchDefaultButton.disabled = true;
+                }
+                else {
+                    colorsSwitchDefaultButton.innerText = "Set modern colors as default";
+                    colorsSwitchDefaultButton.disabled = false;
+                }
+
+                for (let chart in charts) {
+                    charts[chart].data.datasets[0].borderColor = modernBorderColors;
+                    charts[chart].data.datasets[0].backgroundColor = modernBackgroundColors;
+                    charts[chart].update()
+                }
+
+                return;
+            }
+        }
+    </script>
+{% endblock %}

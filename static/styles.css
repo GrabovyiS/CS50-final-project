@@ -1,0 +1,11 @@
+.dropdown-menu {
+    min-width: 230px;
+}
+
+#colors-switch {
+    padding-left: 50px;
+}
+
+.darker {
+    fill: #2e3033;
+}

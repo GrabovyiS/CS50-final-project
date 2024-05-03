@@ -1,0 +1,7 @@
+<svg width="39" height="39" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="39" height="39" fill="white"/>
+<path d="M8 2H37V8H2L8 2Z" fill="#6A0A5B" fill-opacity="0.8"/>
+<path d="M2 8L2 37L8 37L8 2L2 8Z" fill="#6A0A5B" fill-opacity="0.8"/>
+<rect x="2" y="31" width="35" height="6" fill="#6A0A5B" fill-opacity="0.8"/>
+<rect x="37" y="2" width="35" height="6" transform="rotate(90 37 2)" fill="#6A0A5B" fill-opacity="0.8"/>
+</svg>
