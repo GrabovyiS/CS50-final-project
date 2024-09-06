@@ -1,6 +1,8 @@
-# BETTER CALENDAR
+# BETTER CALENDAR (CS50 Final Project)
 
 ## Disclaimer
+
+This repository is a public clone of my CS50 Final Project repository. The original repository stores sensetive information, this does not.
 
 Unfortunately, without disclosing confidential information, it would be difficult to allow someone else to run this application on their local machine, because running this app requires knowing secret keys to run the server, that interacts with the Google API. These special credentials are known to both the application and Google and they are used for authentification of the server, they allow connectoin to Google API services and they allow the app to request consent of a user to access their data (source: https://stackoverflow.com/questions/72171227/what-does-the-google-client-secret-in-an-oauth2-application-give-access-to#:~:text=Client%20id%20and%20client%20secret,tokens%20from%20your%20refresh%20tokens.). If someone else had this information, they could access the same Google API services that Better Calendar uses. This is why a part of the code at the top of `app.py` is missing and the app can't be run on someone else's local machine.
 
@@ -15,7 +17,7 @@ Better Calendar is a web application that extends the functionality of standart 
 `app.py` is the main file of the flask application. It contains all of the fuctionality regarding routing, logging in via oauth, collecting data from Google Calendar API. The `/templates` folder contains four html templates. One of them is a layout that is used on every page with the use of Jinja, and the other three are html pages of the application. The static folder contains a static logo and a css styles file.
 
 
-Parts of the application and "user flow"
+### Parts of the application and "user flow"
 
 When the user first opens the app, the first page they will see is the welcome page. It is displayed when someone, who is not logged in opens the application at the root url. On this page, the user can log into the application with their Google account by clicking the link that will redirect them to `/login` url. There, the process of logging in with Google Oauth begins with the help of authlib library for python.
 
